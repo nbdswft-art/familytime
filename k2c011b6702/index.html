@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>لوحة تحكم فاملي تايم</title>
+<meta name="robots" content="noindex,nofollow,noarchive">
+<meta name="referrer" content="no-referrer">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: blob: https://vbhwbekoeqeqgmltmbym.supabase.co; connect-src https://vbhwbekoeqeqgmltmbym.supabase.co wss://vbhwbekoeqeqgmltmbym.supabase.co 'self'; base-uri 'none'; form-action 'none'; object-src 'none'">
+<link rel="icon" href="../img/icon-192.png" type="image/png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Reem+Kufi:wght@600;700&family=Tajawal:wght@500;700;800&display=swap">
+<link rel="stylesheet" href="../assets/menu.css">
+<link rel="stylesheet" href="../assets/admin.css">
+</head>
+<body>
+<div id="login" class="login">
+  <form id="login-form" class="login-card" autocomplete="on">
+    <img src="../img/logo.webp" alt="" width="140" height="109">
+    <h1>لوحة التحكم</h1>
+    <label class="fld">الإيميل<input id="email" type="email" autocomplete="username" required dir="ltr"></label>
+    <label class="fld">كلمة السر<input id="password" type="password" autocomplete="current-password" required dir="ltr"></label>
+    <button class="btn solid" id="login-btn" type="submit">دخول</button>
+    <p class="hint" id="login-msg" role="status"></p>
+  </form>
+</div>
+<div id="app" class="app" hidden>
+  <div class="sh-top"><div class="wrap">
+    <div class="sh-title"><h3>لوحة التحكم</h3><div class="row-gap"><a class="x" href="../" target="_blank" rel="noopener">شوف المنيو</a><button class="x" id="logout" type="button">خروج</button></div></div>
+    <div class="tabs" role="tablist" id="tabs">
+      <button class="tab on" role="tab" aria-selected="true" data-t="items" type="button">الأصناف والأسعار</button>
+      <button class="tab" role="tab" aria-selected="false" data-t="stats" type="button">الإحصائيات</button>
+      <button class="tab" role="tab" aria-selected="false" data-t="info" type="button">المعلومات والدوام</button>
+      <button class="tab" role="tab" aria-selected="false" data-t="look" type="button">الشكل</button>
+      <button class="tab" role="tab" aria-selected="false" data-t="qr" type="button">الباركود</button>
+      <button class="tab" role="tab" aria-selected="false" data-t="log" type="button">السجل</button>
+      <button class="tab" role="tab" aria-selected="false" data-t="backup" type="button">النسخ الاحتياطية</button>
+    </div>
+  </div></div>
+  <div class="sh-body" id="sh-body"><div class="wrap" id="panel"></div></div>
+  <div class="sh-bar"><div class="wrap">
+    <p class="msg" id="msg" role="status"></p>
+    <div class="acts"><button id="cancel" class="btn ghost" type="button">تراجع</button><button id="save" class="btn solid" type="button" disabled>حفظ</button></div>
+  </div></div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js" integrity="sha384-0w2KAL2YHP6wKOkUDzkCDGgVvfmHnj02DHeQ6XcHOgTfFsGyonKOpShMH1x6nk9o" crossorigin="anonymous"></script>
+<script src="../assets/config.js"></script>
+<script src="../assets/common.js"></script>
+<script src="../assets/admin.js"></script>
+</body>
+</html>
