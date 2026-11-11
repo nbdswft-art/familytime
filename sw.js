@@ -1,5 +1,5 @@
 /* يخزن ملفات المنيو حتى يفتح بسرعة ويشتغل حتى لو النت ضعيف */
-const V = "fm-v1";
+const V = "fm-v2";
 const SHELL = ["./", "index.html", "assets/menu.css", "assets/config.js", "assets/common.js", "assets/menu.js", "data/menu.json", "img/logo.webp", "img/icon-192.png",
   "img/kentucky.webp", "img/pizza.webp", "img/saj.webp", "img/burger.webp", "img/sandwich.webp", "img/dishes.webp", "img/entrees.webp", "img/drinks.webp", "img/arakil.webp"];
 self.addEventListener("install", e => { e.waitUntil(caches.open(V).then(c => c.addAll(SHELL)).then(() => self.skipWaiting())); });
