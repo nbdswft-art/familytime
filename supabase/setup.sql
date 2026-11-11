@@ -1,6 +1,6 @@
 -- منيو فاملي تايم: جداول المنيو والإحصائيات والأدمن
 -- يتشغّل مرة وحدة من Supabase → SQL Editor. ما يلمس جداول دفتر المطعم.
--- قبل التشغيل: غيّر YOUR_EMAIL@example.com (بالأسفل) للإيميل اللي تدخل بيه.
+-- قبل التشغيل: بدّل __PIN__ (بالقسم ٦) برمز الدخول.
 
 create extension if not exists pgcrypto;
 
@@ -163,10 +163,35 @@ create policy fm_img_upd on storage.objects for update to authenticated using (b
 drop policy if exists fm_img_del on storage.objects;
 create policy fm_img_del on storage.objects for delete to authenticated using (bucket_id = 'fm-images' and public.fm_is_admin());
 
--- ٦) خلّي حسابك أدمن (غيّر الإيميل)
-insert into public.fm_admins (user_id, name)
-select id, 'المالك' from auth.users where email = 'YOUR_EMAIL@example.com'
-on conflict (user_id) do nothing;
+-- ٦) حساب الأدمن (الدخول برمز بس، بدون إيميل)
+-- الرمز يتحول لكلمة سر بهالشكل: fm-<الرمز>-menu
+do $$
+declare
+  uid uuid;
+  em text := 'admin@familytime.menu';
+  pw text := 'fm-__PIN__-menu';
+begin
+  if pw like '%\_\_PIN\_\_%' then
+    raise exception 'بدّل __PIN__ برمز الدخول قبل التشغيل';
+  end if;
+  select id into uid from auth.users where email = em;
+  if uid is null then
+    uid := gen_random_uuid();
+    insert into auth.users (instance_id, id, aud, role, email, encrypted_password, email_confirmed_at,
+      raw_app_meta_data, raw_user_meta_data, created_at, updated_at,
+      confirmation_token, email_change, email_change_token_new, recovery_token)
+    values ('00000000-0000-0000-0000-000000000000', uid, 'authenticated', 'authenticated', em,
+      extensions.crypt(pw, extensions.gen_salt('bf')), now(),
+      '{"provider":"email","providers":["email"]}'::jsonb, '{}'::jsonb, now(), now(), '', '', '', '');
+    insert into auth.identities (id, user_id, provider_id, identity_data, provider, last_sign_in_at, created_at, updated_at)
+    values (gen_random_uuid(), uid, uid::text,
+      jsonb_build_object('sub', uid::text, 'email', em, 'email_verified', true), 'email', now(), now(), now());
+  else
+    update auth.users set encrypted_password = extensions.crypt(pw, extensions.gen_salt('bf')),
+      email_confirmed_at = coalesce(email_confirmed_at, now()) where id = uid;
+  end if;
+  insert into public.fm_admins (user_id, name) values (uid, 'المالك') on conflict (user_id) do nothing;
+end $$;
 
--- تأكد: لازم يطلع سطر واحد على الأقل
+-- تأكد: لازم يطلع سطر واحد
 select a.name, u.email from public.fm_admins a join auth.users u on u.id = a.user_id;

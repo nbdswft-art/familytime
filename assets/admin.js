@@ -15,6 +15,7 @@
   const setMsg = t => (msgEl.textContent = t);
 
   /* ---------- الدخول ---------- */
+  const pinToPw = pin => "fm-" + pin + "-menu";
   const LOCK_KEY = "fm-lock";
   const lockInfo = () => { try { return JSON.parse(localStorage.getItem(LOCK_KEY) || "{}"); } catch (e) { return {}; } };
   const setLock = o => { try { localStorage.setItem(LOCK_KEY, JSON.stringify(o)); } catch (e) {} };
@@ -23,12 +24,13 @@
     const L = lockInfo(), lm = $("login-msg");
     if (L.until && Date.now() < L.until) { lm.textContent = `محاولات كثيرة غلط. جرب بعد ${Math.ceil((L.until - Date.now()) / 60000)} دقيقة.`; return; }
     $("login-btn").disabled = true; lm.textContent = "جاري الدخول…";
-    const { error } = await sb.auth.signInWithPassword({ email: $("email").value.trim(), password: $("password").value });
+    const pin = F.digits($("password").value);
+    const { error } = await sb.auth.signInWithPassword({ email: C.adminEmail, password: pinToPw(pin) });
     $("login-btn").disabled = false;
     if (error) {
       const fails = (L.fails || 0) + 1;
       setLock(fails >= 5 ? { fails: 0, until: Date.now() + 15 * 60000 } : { fails });
-      lm.textContent = fails >= 5 ? "انقفل الدخول 15 دقيقة بسبب المحاولات الغلط." : "الإيميل أو كلمة السر غلط.";
+      lm.textContent = fails >= 5 ? "انقفل الدخول 15 دقيقة بسبب المحاولات الغلط." : "الرمز غلط.";
       return;
     }
     setLock({});
@@ -238,7 +240,20 @@
     <div class="card"><h4>أوقات الدوام (بتوقيت بغداد)</h4><p class="hint">إذا وقت السد قبل وقت الفتح، يعني المطعم يسد بعد نص الليل.</p><div class="hgrid">`;
     f.hours.forEach((x, i) => { h += `<div class="hline${x.off ? " off" : ""}"><b>${F.DAYS.ar[i]}</b><label class="sw"><input type="checkbox" data-k="off" data-i="${i}"${x.off ? " checked" : ""}>عطلة</label><label class="fld">يفتح<input type="time" data-k="ho" data-i="${i}" value="${x.o}"${x.off ? " disabled" : ""}></label><label class="fld">يسد<input type="time" data-k="hc" data-i="${i}" value="${x.c}"${x.off ? " disabled" : ""}></label></div>`; });
     h += `</div><button class="link" type="button" id="same-all">طبّق أوقات الأحد على كل الأيام</button></div>`;
+    h += `<div class="card"><h4>تغيير رمز الدخول</h4><p class="hint">أرقام بس، من 4 إلى 12 رقم. كل ما يكون أطول يكون أأمن.</p><div class="two"><label class="fld">الرمز الجديد<input id="pin1" class="num" type="password" inputmode="numeric" autocomplete="new-password" maxlength="12"></label><label class="fld">عيد الرمز<input id="pin2" class="num" type="password" inputmode="numeric" autocomplete="new-password" maxlength="12"></label></div><div><button class="btn ghost sm" type="button" id="pin-save">غيّر الرمز</button></div></div>`;
     panel.innerHTML = h;
+    $("pin-save").onclick = async () => {
+      const a = F.digits($("pin1").value), b = F.digits($("pin2").value);
+      if (a.length < 4) { setMsg("الرمز لازم يكون 4 أرقام على الأقل"); return; }
+      if (a !== b) { setMsg("الرمزين مو نفس الشي"); return; }
+      $("pin-save").disabled = true;
+      const { error } = await sb.auth.updateUser({ password: pinToPw(a) });
+      $("pin-save").disabled = false;
+      if (error) { setMsg("ما تغيّر الرمز. سجّل خروج وادخل مرة ثانية وجرب."); return; }
+      $("pin1").value = ""; $("pin2").value = "";
+      await sb.from("fm_log").insert({ who: me.name, changes: ["غيّر رمز الدخول"] });
+      setMsg("تغيّر الرمز. من المرة الجاية ادخل بالرمز الجديد.");
+    };
     $("same-all").onclick = () => { const a = M.info.hours[0]; M.info.hours = M.info.hours.map(() => ({ ...a })); changed(); drawPanel(); };
   }
   function setField(k, el) {

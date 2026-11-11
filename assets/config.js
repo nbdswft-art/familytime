@@ -2,5 +2,6 @@
 window.FM_CONFIG = {
   supabaseUrl: "https://vbhwbekoeqeqgmltmbym.supabase.co",
   supabaseKey: "sb_publishable_GoBcFBbj2RI1vYnvRPlyrg_Cd71bwqx",
+  adminEmail: "admin@familytime.menu",
   siteUrl: "https://nbdswft-art.github.io/familytime/"
 };

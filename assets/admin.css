@@ -115,3 +115,4 @@ body{direction:rtl}
 .lg-h span{color:var(--muted)}
 .lg ul{display:grid;gap:3px;font-size:15px}
 .lg li::before{content:"• ";color:var(--brand)}
+.pin-in{font-size:26px!important;letter-spacing:.4em;padding:10px!important}

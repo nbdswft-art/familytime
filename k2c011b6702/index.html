@@ -19,8 +19,7 @@
   <form id="login-form" class="login-card" autocomplete="on">
     <img src="../img/logo.webp" alt="" width="140" height="109">
     <h1>لوحة التحكم</h1>
-    <label class="fld">الإيميل<input id="email" type="email" autocomplete="username" required dir="ltr"></label>
-    <label class="fld">كلمة السر<input id="password" type="password" autocomplete="current-password" required dir="ltr"></label>
+    <label class="fld">رمز الدخول<input id="password" class="num pin-in" type="password" inputmode="numeric" autocomplete="current-password" required dir="ltr" maxlength="12"></label>
     <button class="btn solid" id="login-btn" type="submit">دخول</button>
     <p class="hint" id="login-msg" role="status"></p>
   </form>
